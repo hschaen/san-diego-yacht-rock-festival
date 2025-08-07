@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { AuthService } from '@/lib/services/auth';
 import { useContentLoading } from '@/lib/hooks/useContent';
 
@@ -54,14 +53,6 @@ export default function SetupPage() {
             <h1 className="text-xl font-semibold text-yellow-400">
               Initial Setup
             </h1>
-            {adminUser && (
-              <Link
-                href="/admin"
-                className="text-cyan-300 hover:text-cyan-200"
-              >
-                Back to Dashboard →
-              </Link>
-            )}
           </div>
         </div>
       </header>
@@ -281,20 +272,6 @@ export default function SetupPage() {
           </div>
         )}
 
-        {/* Instructions Panel */}
-        {adminUser && (
-          <div className="mt-8 bg-cyan-500/10 backdrop-blur-md rounded-xl p-6 border border-cyan-500/30">
-            <h3 className="text-lg font-semibold text-cyan-300 mb-2">
-              💡 Quick Setup Instructions
-            </h3>
-            <ol className="text-white/80 text-sm space-y-2">
-              <li>1. Initialize the content to populate your database</li>
-              <li>2. Create additional admin accounts if needed</li>
-              <li>3. Access the dashboard to start editing content</li>
-              <li>4. All changes are saved automatically and go live instantly</li>
-            </ol>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -32,13 +32,17 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
-      await addDoc(collection(db, "registrations"), {
-        ...formData,
-        timestamp: new Date(),
-      });
-      setSubmitSuccess(true);
-      setFormData({ name: "", email: "", phone: "" });
-      setTimeout(() => setSubmitSuccess(false), 5000);
+      if (db) {
+        await addDoc(collection(db, "registrations"), {
+          ...formData,
+          timestamp: new Date(),
+        });
+        setSubmitSuccess(true);
+        setFormData({ name: "", email: "", phone: "" });
+        setTimeout(() => setSubmitSuccess(false), 5000);
+      } else {
+        throw new Error("Database not initialized");
+      }
     } catch (error) {
       console.error("Error adding document: ", error);
       alert("There was an error submitting your registration. Please try again.");
