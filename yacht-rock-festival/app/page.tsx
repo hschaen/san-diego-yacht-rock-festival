@@ -78,7 +78,7 @@ export default function Home() {
           {/* Headlines */}
           <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-yellow-400 mb-4 drop-shadow-lg">
-              Sign-Up now to get Early Access to Tickets to San Diego Yacht Rock Festival
+              Get Priority Access to San Diego Yacht Rock Festival Tickets
             </h1>
             <p className="text-xl sm:text-2xl text-cyan-300 mb-6 drop-shadow-lg">
               Get On Board for San Diego&apos;s Smoothest Summer Festival
