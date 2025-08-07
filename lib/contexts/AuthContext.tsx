@@ -5,6 +5,7 @@ import { User } from 'firebase/auth';
 import { AuthService } from '@/lib/services/auth';
 import { AdminUser } from '@/lib/types/content';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -24,6 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    // If auth is not initialized, set loading to false immediately
+    if (!auth) {
+      setLoading(false);
+      return () => {};
+    }
+
     const unsubscribe = AuthService.onAuthChange(async (firebaseUser) => {
       if (firebaseUser) {
         // Check if user is admin
