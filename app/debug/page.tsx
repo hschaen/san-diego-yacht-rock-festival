@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { auth, db } from '@/lib/firebase';
 
 export default function DebugPage() {
-  const [debugInfo, setDebugInfo] = useState<any>({});
+  const [debugInfo, setDebugInfo] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
     const info = {

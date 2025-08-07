@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth, withAuth } from '@/lib/contexts/AuthContext';
+import { withAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
