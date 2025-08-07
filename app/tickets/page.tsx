@@ -35,6 +35,7 @@ export default function TicketsPage() {
         "Cash bar available",
       ],
       popular: false,
+      soldOut: false,
     },
     {
       id: "vip",
@@ -50,6 +51,7 @@ export default function TicketsPage() {
         "Meet & greet opportunities",
       ],
       popular: true,
+      soldOut: false,
     },
     {
       id: "captain",
@@ -66,6 +68,7 @@ export default function TicketsPage() {
         "Priority parking",
       ],
       popular: false,
+      soldOut: false,
     },
   ];
 
@@ -82,7 +85,7 @@ export default function TicketsPage() {
 
   const handlePurchase = (ticketId: string) => {
     const ticket = ticketTypes.find(t => t.id === ticketId);
-    if (ticket?.soldOut) {
+    if (ticket && 'soldOut' in ticket && ticket.soldOut) {
       alert('This ticket tier is sold out!');
     } else {
       alert(`Redirecting to purchase ${ticket?.name}...`);
