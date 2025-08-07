@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth, withAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AuthService } from '@/lib/services/auth';
 import { useContentLoading } from '@/lib/hooks/useContent';
 
-function SetupPage() {
-  const { adminUser } = useAuth();
+export default function SetupPage() {
   const router = useRouter();
   const { isInitializing, initError, initializeContent } = useContentLoading();
   
@@ -301,5 +299,3 @@ function SetupPage() {
     </div>
   );
 }
-
-export default withAuth(SetupPage);
