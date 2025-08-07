@@ -1,15 +1,16 @@
+"use client";
+
 import HamburgerMenu from "@/components/hamburger-menu";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useLineupPage, fallbackContent } from "@/lib/hooks/useContent";
 
 export default function LineupPage() {
-  const artists = [
-    { name: "Yacht Rock Revue", time: "9:00 PM", category: "headliner" },
-    { name: "Christopher Cross", time: "7:30 PM", category: "headliner" },
-    { name: "Player", time: "6:30 PM", category: "featured" },
-    { name: "Ambrosia", time: "5:45 PM", category: "featured" },
-    { name: "The Doobie Brothers Tribute", time: "5:00 PM", category: "opener" },
-  ];
+  const { content } = useLineupPage();
+  
+  // Use fallback content if loading or no content
+  const pageContent = content || fallbackContent.lineup;
+  const artists = pageContent.artists || [];
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-purple-900 via-purple-600 to-pink-500">
@@ -36,9 +37,9 @@ export default function LineupPage() {
 
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 drop-shadow-lg mb-2">
-            2025 LINEUP
+            {pageContent.title}
           </h1>
-          <p className="text-cyan-300 text-lg">Smooth sounds all day long</p>
+          <p className="text-cyan-300 text-lg">{pageContent.subtitle}</p>
         </div>
 
         <div className="max-w-4xl mx-auto w-full">
@@ -87,7 +88,7 @@ export default function LineupPage() {
 
           <div className="mt-12 text-center">
             <p className="text-cyan-300 text-sm">
-              More artists to be announced!
+              {pageContent.footerText}
             </p>
           </div>
         </div>

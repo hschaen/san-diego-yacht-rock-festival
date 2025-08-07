@@ -5,8 +5,10 @@ import HamburgerMenu from "@/components/hamburger-menu";
 import { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useHomePage, fallbackContent } from "@/lib/hooks/useContent";
 
 export default function Home() {
+  const { content } = useHomePage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,6 +16,9 @@ export default function Home() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  // Use fallback content if loading or no content
+  const pageContent = content || fallbackContent.home;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -78,13 +83,13 @@ export default function Home() {
           {/* Headlines */}
           <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-yellow-400 mb-4 drop-shadow-lg">
-              Get Priority Access to San Diego Yacht Rock Festival Tickets
+              {pageContent.headline}
             </h1>
             <p className="text-xl sm:text-2xl text-cyan-300 mb-6 drop-shadow-lg">
-              Get On Board for San Diego&apos;s Smoothest Summer Festival
+              {pageContent.subheadline}
             </p>
             <p className="text-lg text-white/90 drop-shadow-lg">
-              First access to tickets, lineup drops, and VIP upgrades — straight to your inbox.
+              {pageContent.description}
             </p>
           </div>
 
@@ -93,10 +98,10 @@ export default function Home() {
             {submitSuccess ? (
               <div className="text-center py-8">
                 <h3 className="text-2xl font-semibold text-cyan-300 mb-2">
-                  Welcome Aboard, Captain! ⛵
+                  {pageContent.successMessage.title}
                 </h3>
                 <p className="text-white">
-                  You&apos;re on the list! Check your inbox for exclusive updates.
+                  {pageContent.successMessage.description}
                 </p>
               </div>
             ) : (
@@ -104,7 +109,7 @@ export default function Home() {
                 {/* Name Field */}
                 <div>
                   <label htmlFor="name" className="block text-white text-sm font-medium mb-2">
-                    Name <span className="text-white/60">(optional)</span>
+                    {pageContent.formLabels?.name || 'Name'} <span className="text-white/60">(optional)</span>
                   </label>
                   <input
                     id="name"
@@ -112,7 +117,7 @@ export default function Home() {
                     type="text"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Captain Smooth"
+                    placeholder={pageContent.formPlaceholders?.name || 'Captain Smooth'}
                     className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
                   />
                 </div>
@@ -120,7 +125,7 @@ export default function Home() {
                 {/* Email Field */}
                 <div>
                   <label htmlFor="email" className="block text-white text-sm font-medium mb-2">
-                    Email ✅ <span className="text-yellow-400">(required)</span>
+                    {pageContent.formLabels?.email || 'Email'} <span className="text-yellow-400">(required)</span>
                   </label>
                   <input
                     id="email"
@@ -129,7 +134,7 @@ export default function Home() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="smooth@sailing.com"
+                    placeholder={pageContent.formPlaceholders?.email || 'smooth@sailing.com'}
                     className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
                   />
                 </div>
@@ -137,7 +142,7 @@ export default function Home() {
                 {/* Phone Field */}
                 <div>
                   <label htmlFor="phone" className="block text-white text-sm font-medium mb-2">
-                    Cell Number 📱 <span className="text-white/60">(optional)</span>
+                    {pageContent.formLabels?.phone || 'Cell Number 📱'} <span className="text-white/60">(optional)</span>
                   </label>
                   <input
                     id="phone"
@@ -145,7 +150,7 @@ export default function Home() {
                     type="tel"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="(619) 555-YACHT"
+                    placeholder={pageContent.formPlaceholders?.phone || '(619) 555-YACHT'}
                     className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
                   />
                   <p className="text-cyan-300 text-sm mt-2">
@@ -159,17 +164,16 @@ export default function Home() {
                   disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-300 hover:to-orange-300 text-purple-900 font-bold py-4 px-6 rounded-lg text-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
-                  {isSubmitting ? "Setting Sail..." : "🚢 Join the Captain's List"}
+                  {isSubmitting ? "Setting Sail..." : pageContent.submitButton}
                 </button>
 
                 {/* Trust Boosters */}
                 <div className="text-center space-y-2 pt-4">
-                  <p className="text-white/80 text-sm">
-                    ✨ No spam. Just smooth sailing.
-                  </p>
-                  <p className="text-white/80 text-sm">
-                    🎯 You&apos;ll hear from us before the general public.
-                  </p>
+                  {pageContent.trustBuilders?.map((text, index) => (
+                    <p key={index} className="text-white/80 text-sm">
+                      {text}
+                    </p>
+                  ))}
                 </div>
               </form>
             )}
@@ -178,13 +182,13 @@ export default function Home() {
           {/* Event Details */}
           <div className="text-center mt-12 space-y-2">
             <h2 className="text-2xl sm:text-3xl font-bold text-cyan-300 drop-shadow-lg">
-              SAT OCT 11 • 2025 • 5PM - 10PM
+              {pageContent.eventDetails?.date} • {pageContent.eventDetails?.time}
             </h2>
             <p className="text-white text-lg font-semibold drop-shadow-lg">
-              LIBERTY STATION : INGRAM PLAZA
+              {pageContent.eventDetails?.venue}
             </p>
             <p className="text-cyan-200 text-sm drop-shadow-lg">
-              2751 DEWEY RD SAN DIEGO CA 92106
+              {pageContent.eventDetails?.address}
             </p>
           </div>
         </div>
