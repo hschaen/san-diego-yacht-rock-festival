@@ -1,0 +1,186 @@
+"use client";
+
+import HamburgerMenu from "@/components/hamburger-menu";
+import Link from "next/link";
+import { ArrowLeft, Check, Star, Users, Wine } from "lucide-react";
+
+export default function TicketsPage() {
+  const ticketTypes = [
+    {
+      id: "general",
+      name: "General Admission",
+      price: "$75",
+      icon: Users,
+      features: [
+        "Festival entry",
+        "Access to all performances",
+        "Food truck access",
+        "Cash bar available",
+      ],
+      popular: false,
+    },
+    {
+      id: "vip",
+      name: "VIP Experience",
+      price: "$150",
+      icon: Star,
+      features: [
+        "Festival entry",
+        "VIP viewing area",
+        "Complimentary welcome drink",
+        "Private bar access",
+        "VIP restrooms",
+        "Meet & greet opportunities",
+      ],
+      popular: true,
+    },
+    {
+      id: "captain",
+      name: "Captain's Table",
+      price: "$250",
+      icon: Wine,
+      features: [
+        "All VIP benefits",
+        "Premium open bar",
+        "Exclusive lounge access",
+        "Complimentary food",
+        "Artist meet & greets",
+        "Commemorative merchandise",
+        "Priority parking",
+      ],
+      popular: false,
+    },
+  ];
+
+  const handlePurchase = (ticketId: string) => {
+    alert(`Redirecting to purchase ${ticketTypes.find(t => t.id === ticketId)?.name}...`);
+  };
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-purple-900 via-purple-600 to-pink-500">
+      <HamburgerMenu />
+      
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 via-purple-600/30 to-pink-500/50" />
+        
+        <div className="absolute bottom-0 left-0 right-0 h-1/2">
+          <div className="grid-lines absolute inset-0" />
+        </div>
+      </div>
+
+      <div className="relative z-10 min-h-screen flex flex-col px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-cyan-300 hover:text-yellow-400 transition-colors"
+          >
+            <ArrowLeft size={24} />
+            <span className="font-semibold">Back</span>
+          </Link>
+        </div>
+
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 drop-shadow-lg mb-2">
+            GET YOUR TICKETS
+          </h1>
+          <p className="text-cyan-300 text-lg">Limited availability - Book now!</p>
+        </div>
+
+        <div className="max-w-6xl mx-auto w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {ticketTypes.map((ticket) => {
+              const Icon = ticket.icon;
+              return (
+                <div
+                  key={ticket.id}
+                  className={`
+                    relative backdrop-blur-sm rounded-lg p-6 transition-all hover:scale-105
+                    ${
+                      ticket.popular
+                        ? "bg-gradient-to-b from-yellow-400/30 to-orange-400/30 border-2 border-yellow-400"
+                        : "bg-purple-800/40 border border-purple-400"
+                    }
+                  `}
+                >
+                  {ticket.popular && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-yellow-400 text-purple-900 px-4 py-1 rounded-full text-sm font-bold">
+                        MOST POPULAR
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-center mb-6">
+                    <div
+                      className={`
+                        w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center
+                        ${
+                          ticket.popular
+                            ? "bg-yellow-400 text-purple-900"
+                            : "bg-cyan-400 text-purple-900"
+                        }
+                      `}
+                    >
+                      <Icon size={32} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2">{ticket.name}</h3>
+                    <p className="text-4xl font-bold text-yellow-400">{ticket.price}</p>
+                  </div>
+
+                  <ul className="space-y-3 mb-6">
+                    {ticket.features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <Check size={20} className="text-cyan-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handlePurchase(ticket.id)}
+                    className={`
+                      w-full py-3 px-4 rounded-lg font-bold transition-colors
+                      ${
+                        ticket.popular
+                          ? "bg-yellow-400 hover:bg-yellow-300 text-purple-900"
+                          : "bg-purple-600 hover:bg-purple-500 text-white"
+                      }
+                    `}
+                  >
+                    Select Tickets
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-12 bg-purple-900/50 backdrop-blur-sm rounded-lg p-6 border border-purple-400">
+            <h3 className="text-xl font-bold text-yellow-400 mb-3">Ticket Information:</h3>
+            <ul className="space-y-2 text-purple-200">
+              <li>• All sales are final - no refunds</li>
+              <li>• Must be 21+ with valid ID</li>
+              <li>• Gates open at 4:30 PM</li>
+              <li>• Free parking available at Liberty Station</li>
+              <li>• Group discounts available for 10+ tickets</li>
+            </ul>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-cyan-300 text-sm">
+              Having trouble? Contact us at tickets@sdyachtrockfest.com
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-auto pt-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-purple-900/60 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center">
+              <span className="text-purple-900 text-xs font-bold">LS</span>
+            </div>
+            <span className="text-yellow-400 font-semibold">LIBERTY STATION</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

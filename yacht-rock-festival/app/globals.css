@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Righteous&family=Pacifico&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .yacht-rock-title {
+    font-family: 'Righteous', sans-serif;
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 25%, #dc2626 50%, #be123c 75%, #881337 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    text-shadow: 
+      0 0 20px rgba(251, 191, 36, 0.5),
+      0 0 40px rgba(251, 191, 36, 0.3),
+      0 0 60px rgba(251, 191, 36, 0.2);
+    letter-spacing: 0.05em;
+    line-height: 0.9;
+    border: 3px solid;
+    border-image: linear-gradient(180deg, #fbbf24, #dc2626) 1;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+  }
+
+  .festival-script {
+    font-family: 'Pacifico', cursive;
+    font-style: italic;
+    text-shadow: 
+      0 0 10px rgba(236, 72, 153, 0.8),
+      0 0 20px rgba(236, 72, 153, 0.5),
+      0 0 30px rgba(236, 72, 153, 0.3);
+  }
+
+  .grid-lines {
+    background-image: 
+      linear-gradient(rgba(0, 255, 255, 0.1) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.1) 2px, transparent 2px),
+      linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    perspective: 500px;
+    transform-style: preserve-3d;
+    transform: rotateX(60deg);
+    animation: grid-move 20s linear infinite;
+  }
+
+  @keyframes grid-move {
+    0% {
+      background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+    }
+    100% {
+      background-position: -2px 98px, -2px -2px, -1px 19px, -1px -1px;
+    }
+  }
+
+  .sun-glow {
+    animation: sun-pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes sun-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .sun-reflection {
+    animation: reflection-shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes reflection-shimmer {
+    0%, 100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
+}
