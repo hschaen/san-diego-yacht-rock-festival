@@ -51,6 +51,13 @@ function AdminDashboard() {
       href: '/admin/settings',
       icon: '⚙️',
       color: 'from-indigo-400 to-purple-400'
+    },
+    {
+      title: 'Registrations',
+      description: 'View event registrations and export data',
+      href: '/admin/registrations',
+      icon: '👥',
+      color: 'from-amber-400 to-orange-400'
     }
   ];
 
