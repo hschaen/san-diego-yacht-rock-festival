@@ -3,9 +3,26 @@
 import HamburgerMenu from "@/components/hamburger-menu";
 import Link from "next/link";
 import { ArrowLeft, Check, Star, Users, Wine } from "lucide-react";
+import { useTicketsPage, fallbackContent } from "@/lib/hooks/useContent";
 
 export default function TicketsPage() {
-  const ticketTypes = [
+  const { content } = useTicketsPage();
+  
+  // Use content from database or fallback
+  const pageContent = content || fallbackContent.tickets;
+  const tiers = pageContent.tiers || [];
+  const infoSection = pageContent.infoSection || { title: '', items: [] };
+
+  // Icon mapping for tiers
+  const getIcon = (tierName: string) => {
+    if (tierName.toLowerCase().includes('general')) return Users;
+    if (tierName.toLowerCase().includes('vip')) return Star;
+    if (tierName.toLowerCase().includes('captain') || tierName.toLowerCase().includes('premium')) return Wine;
+    return Users;
+  };
+
+  // Legacy hardcoded tickets for when no tiers in database
+  const legacyTicketTypes = [
     {
       id: "general",
       name: "General Admission",
@@ -52,8 +69,24 @@ export default function TicketsPage() {
     },
   ];
 
+  // Use database tiers if available, otherwise use legacy tickets
+  const ticketTypes = tiers.length > 0 ? tiers.map(tier => ({
+    id: tier.id,
+    name: tier.name,
+    price: `$${tier.price}`,
+    icon: getIcon(tier.name),
+    features: tier.features,
+    popular: tier.popular || false,
+    soldOut: tier.soldOut || false
+  })) : legacyTicketTypes;
+
   const handlePurchase = (ticketId: string) => {
-    alert(`Redirecting to purchase ${ticketTypes.find(t => t.id === ticketId)?.name}...`);
+    const ticket = ticketTypes.find(t => t.id === ticketId);
+    if (ticket?.soldOut) {
+      alert('This ticket tier is sold out!');
+    } else {
+      alert(`Redirecting to purchase ${ticket?.name}...`);
+    }
   };
 
   return (
@@ -81,9 +114,9 @@ export default function TicketsPage() {
 
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 drop-shadow-lg mb-2">
-            GET YOUR TICKETS
+            {pageContent.title || 'GET YOUR TICKETS'}
           </h1>
-          <p className="text-cyan-300 text-lg">Limited availability - Book now!</p>
+          <p className="text-cyan-300 text-lg">{pageContent.subtitle || 'Limited availability - Book now!'}</p>
         </div>
 
         <div className="max-w-6xl mx-auto w-full">
@@ -138,36 +171,52 @@ export default function TicketsPage() {
 
                   <button
                     onClick={() => handlePurchase(ticket.id)}
+                    disabled={ticket.soldOut}
                     className={`
                       w-full py-3 px-4 rounded-lg font-bold transition-colors
                       ${
-                        ticket.popular
+                        ticket.soldOut
+                          ? "bg-gray-600 cursor-not-allowed text-gray-400"
+                          : ticket.popular
                           ? "bg-yellow-400 hover:bg-yellow-300 text-purple-900"
                           : "bg-purple-600 hover:bg-purple-500 text-white"
                       }
                     `}
                   >
-                    Select Tickets
+                    {ticket.soldOut ? 'Sold Out' : 'Select Tickets'}
                   </button>
                 </div>
               );
             })}
           </div>
 
-          <div className="mt-12 bg-purple-900/50 backdrop-blur-sm rounded-lg p-6 border border-purple-400">
-            <h3 className="text-xl font-bold text-yellow-400 mb-3">Ticket Information:</h3>
-            <ul className="space-y-2 text-purple-200">
-              <li>• All sales are final - no refunds</li>
-              <li>• Must be 21+ with valid ID</li>
-              <li>• Gates open at 4:30 PM</li>
-              <li>• Free parking available at Liberty Station</li>
-              <li>• Group discounts available for 10+ tickets</li>
-            </ul>
-          </div>
+          {/* Info section from database or fallback */}
+          {(infoSection.items.length > 0 || legacyTicketTypes === ticketTypes) && (
+            <div className="mt-12 bg-purple-900/50 backdrop-blur-sm rounded-lg p-6 border border-purple-400">
+              <h3 className="text-xl font-bold text-yellow-400 mb-3">
+                {infoSection.title || 'Ticket Information:'}
+              </h3>
+              <ul className="space-y-2 text-purple-200">
+                {infoSection.items.length > 0 ? (
+                  infoSection.items.map((item, index) => (
+                    <li key={index}>• {item}</li>
+                  ))
+                ) : (
+                  <>
+                    <li>• All sales are final - no refunds</li>
+                    <li>• Must be 21+ with valid ID</li>
+                    <li>• Gates open at 4:30 PM</li>
+                    <li>• Free parking available at Liberty Station</li>
+                    <li>• Group discounts available for 10+ tickets</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          )}
 
           <div className="mt-8 text-center">
             <p className="text-cyan-300 text-sm">
-              Having trouble? Contact us at tickets@sdyachtrockfest.com
+              Having trouble? Contact us at {pageContent.contactEmail || 'tickets@sdyachtrockfest.com'}
             </p>
           </div>
         </div>

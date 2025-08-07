@@ -1,9 +1,31 @@
+"use client";
+
 import HamburgerMenu from "@/components/hamburger-menu";
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, Music, Utensils } from "lucide-react";
+import { useSchedulePage, fallbackContent } from "@/lib/hooks/useContent";
 
 export default function SchedulePage() {
-  const schedule = [
+  const { content } = useSchedulePage();
+  
+  // Use content from database or fallback
+  const pageContent = content || fallbackContent.schedule;
+  const events = pageContent.events || [];
+  const notes = pageContent.notes || [];
+
+  // Icon mapping for backward compatibility
+  const getIcon = (iconString?: string) => {
+    switch(iconString) {
+      case '📍': return MapPin;
+      case '🎵': return Music;
+      case '🍽️': return Utensils;
+      case '🕐': return Clock;
+      default: return Music;
+    }
+  };
+
+  // Legacy hardcoded schedule for when no events in database
+  const legacySchedule = [
     {
       time: "4:30 PM",
       title: "Gates Open",
@@ -62,6 +84,18 @@ export default function SchedulePage() {
     },
   ];
 
+  // Use database events if available, otherwise use legacy schedule
+  const schedule = events.length > 0 ? events.map(event => ({
+    time: event.time,
+    title: event.title,
+    description: event.description,
+    icon: getIcon(event.icon),
+    category: event.title.toLowerCase().includes('headliner') ? 'headliner' :
+              event.title.toLowerCase().includes('gates') ? 'venue' :
+              event.title.toLowerCase().includes('food') || event.title.toLowerCase().includes('break') ? 'break' :
+              'music'
+  })) : legacySchedule;
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-purple-900 via-purple-600 to-pink-500">
       <HamburgerMenu />
@@ -87,9 +121,9 @@ export default function SchedulePage() {
 
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 drop-shadow-lg mb-2">
-            EVENT SCHEDULE
+            {pageContent.title || 'EVENT SCHEDULE'}
           </h1>
-          <p className="text-cyan-300 text-lg">Saturday, October 11, 2025</p>
+          <p className="text-cyan-300 text-lg">{pageContent.date || 'Saturday, October 11, 2025'}</p>
         </div>
 
         <div className="max-w-4xl mx-auto w-full">
@@ -160,15 +194,26 @@ export default function SchedulePage() {
             })}
           </div>
 
-          <div className="mt-12 bg-purple-900/50 backdrop-blur-sm rounded-lg p-6 border border-purple-400">
-            <h3 className="text-xl font-bold text-yellow-400 mb-3">Important Notes:</h3>
-            <ul className="space-y-2 text-purple-200">
-              <li>• Schedule is subject to change</li>
-              <li>• Food trucks and bars open throughout the event</li>
-              <li>• VIP area access available with special tickets</li>
-              <li>• Free parking at Liberty Station</li>
-            </ul>
-          </div>
+          {/* Notes section from database or fallback */}
+          {(notes.length > 0 || legacySchedule === schedule) && (
+            <div className="mt-12 bg-purple-900/50 backdrop-blur-sm rounded-lg p-6 border border-purple-400">
+              <h3 className="text-xl font-bold text-yellow-400 mb-3">Important Notes:</h3>
+              <ul className="space-y-2 text-purple-200">
+                {notes.length > 0 ? (
+                  notes.map((note, index) => (
+                    <li key={index}>• {note}</li>
+                  ))
+                ) : (
+                  <>
+                    <li>• Schedule is subject to change</li>
+                    <li>• Food trucks and bars open throughout the event</li>
+                    <li>• VIP area access available with special tickets</li>
+                    <li>• Free parking at Liberty Station</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="mt-auto pt-8 text-center">
