@@ -134,9 +134,8 @@ function SettingsEditor() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Edit Form */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-8">
+        {/* Edit Form */}
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-8">
             <h1 className="text-3xl font-bold text-white mb-6">Site Settings</h1>
 
             {/* SEO Metadata */}
@@ -264,11 +263,11 @@ function SettingsEditor() {
                 Cancel
               </button>
             </div>
-          </div>
+        </div>
 
-          {/* Preview */}
-          {showPreview && (
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8">
+        {/* Preview */}
+        {showPreview && (
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 mt-8">
               <h2 className="text-2xl font-bold text-white mb-6">Preview</h2>
               
               {/* Browser Tab Preview */}
@@ -335,9 +334,8 @@ function SettingsEditor() {
                   </div>
                 </div>
               )}
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
