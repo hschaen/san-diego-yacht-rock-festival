@@ -88,7 +88,10 @@ export default function TicketsPage() {
     if (ticket && 'soldOut' in ticket && ticket.soldOut) {
       alert('This ticket tier is sold out!');
     } else {
-      alert(`Redirecting to purchase ${ticket?.name}...`);
+      // Show RSVP message with option to go to homepage
+      if (window.confirm('RSVP to be notified when Tickets go on Sale\n\nClick OK to go to the homepage and RSVP')) {
+        window.location.href = '/';
+      }
     }
   };
 
@@ -119,7 +122,7 @@ export default function TicketsPage() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 drop-shadow-lg mb-2">
             {pageContent.title || 'GET YOUR TICKETS'}
           </h1>
-          <p className="text-cyan-300 text-lg">{pageContent.subtitle || 'Limited availability - Book now!'}</p>
+          <p className="text-cyan-300 text-lg">{pageContent.subtitle || 'Be the first to know when tickets go on sale!'}</p>
         </div>
 
         <div className="max-w-6xl mx-auto w-full">
@@ -186,7 +189,7 @@ export default function TicketsPage() {
                       }
                     `}
                   >
-                    {ticket.soldOut ? 'Sold Out' : 'Select Tickets'}
+                    {ticket.soldOut ? 'Sold Out' : 'Get Notified'}
                   </button>
                 </div>
               );

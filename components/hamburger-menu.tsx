@@ -156,7 +156,7 @@ export default function HamburgerMenu() {
                     onClick={toggleMenu}
                     className="block w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-4 px-6 rounded-lg text-center text-lg transition-colors shadow-lg"
                   >
-                    Buy Tickets
+                    Get Notified
                   </Link>
                   
                   <div className="mt-6 pt-6 border-t border-purple-700/50">
