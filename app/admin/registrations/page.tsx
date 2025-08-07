@@ -290,7 +290,7 @@ function RegistrationsPage() {
           ) : registrations.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-white/60 text-xl">No registrations yet</div>
-              <p className="text-white/40 mt-2">Click "Add Entry" to manually add a registration.</p>
+              <p className="text-white/40 mt-2">Click &quot;Add Entry&quot; to manually add a registration.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
