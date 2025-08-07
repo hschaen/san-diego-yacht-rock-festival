@@ -12,10 +12,12 @@ import { AdminUser } from '@/lib/types/content';
 
 export class AuthService {
   static async signIn(email: string, password: string): Promise<User> {
+    if (!auth) throw new Error('Firebase auth not initialized');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // Check if user is admin
+      if (!db) throw new Error('Firebase db not initialized');
       const adminDoc = await getDoc(doc(db, 'admins', userCredential.user.uid));
       if (!adminDoc.exists()) {
         await firebaseSignOut(auth);
@@ -44,10 +46,12 @@ export class AuthService {
   }
 
   static async signOut(): Promise<void> {
+    if (!auth) return;
     await firebaseSignOut(auth);
   }
 
   static async resetPassword(email: string): Promise<void> {
+    if (!auth) throw new Error('Firebase auth not initialized');
     try {
       await sendPasswordResetEmail(auth, email);
     } catch (error) {
@@ -64,6 +68,7 @@ export class AuthService {
     password: string, 
     name: string
   ): Promise<void> {
+    if (!auth || !db) throw new Error('Firebase not initialized');
     try {
       // Create auth user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -91,6 +96,7 @@ export class AuthService {
   }
 
   static async checkIsAdmin(uid: string): Promise<boolean> {
+    if (!db) return false;
     try {
       const adminDoc = await getDoc(doc(db, 'admins', uid));
       return adminDoc.exists();
@@ -101,6 +107,7 @@ export class AuthService {
   }
 
   static async getAdminUser(uid: string): Promise<AdminUser | null> {
+    if (!db) return null;
     try {
       const adminDoc = await getDoc(doc(db, 'admins', uid));
       if (adminDoc.exists()) {
@@ -114,6 +121,7 @@ export class AuthService {
   }
 
   static onAuthChange(callback: (user: User | null) => void): () => void {
+    if (!auth) return () => {};
     return onAuthStateChanged(auth, callback);
   }
 }

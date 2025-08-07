@@ -43,7 +43,9 @@ function useContent<T>(
   useEffect(() => {
     fetchContent();
 
-    // Set up real-time listener
+    // Set up real-time listener only if db is available
+    if (!db) return;
+    
     const unsubscribe = onSnapshot(
       doc(db, 'content', contentId),
       (snapshot) => {

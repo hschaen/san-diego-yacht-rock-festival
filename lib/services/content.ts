@@ -57,6 +57,8 @@ export class ContentService {
 
   // Site Metadata
   static async getSiteMetadata(): Promise<SiteMetadata | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<SiteMetadata>(CONTENT_IDS.METADATA);
     if (cached) return cached;
 
@@ -77,6 +79,7 @@ export class ContentService {
   }
 
   static async updateSiteMetadata(data: Partial<SiteMetadata>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.METADATA);
     await updateDoc(docRef, {
       ...data,
@@ -89,6 +92,8 @@ export class ContentService {
 
   // Home Page
   static async getHomePage(): Promise<HomePage | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<HomePage>(CONTENT_IDS.HOME);
     if (cached) return cached;
 
@@ -109,6 +114,7 @@ export class ContentService {
   }
 
   static async updateHomePage(data: Partial<HomePage>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.HOME);
     await updateDoc(docRef, {
       ...data,
@@ -121,6 +127,8 @@ export class ContentService {
 
   // Lineup Page
   static async getLineupPage(): Promise<LineupPage | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<LineupPage>(CONTENT_IDS.LINEUP);
     if (cached) return cached;
 
@@ -141,6 +149,7 @@ export class ContentService {
   }
 
   static async updateLineupPage(data: Partial<LineupPage>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.LINEUP);
     await updateDoc(docRef, {
       ...data,
@@ -153,6 +162,8 @@ export class ContentService {
 
   // Schedule Page
   static async getSchedulePage(): Promise<SchedulePage | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<SchedulePage>(CONTENT_IDS.SCHEDULE);
     if (cached) return cached;
 
@@ -173,6 +184,7 @@ export class ContentService {
   }
 
   static async updateSchedulePage(data: Partial<SchedulePage>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.SCHEDULE);
     await updateDoc(docRef, {
       ...data,
@@ -185,6 +197,8 @@ export class ContentService {
 
   // Tickets Page
   static async getTicketsPage(): Promise<TicketsPage | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<TicketsPage>(CONTENT_IDS.TICKETS);
     if (cached) return cached;
 
@@ -205,6 +219,7 @@ export class ContentService {
   }
 
   static async updateTicketsPage(data: Partial<TicketsPage>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.TICKETS);
     await updateDoc(docRef, {
       ...data,
@@ -217,6 +232,8 @@ export class ContentService {
 
   // Navigation
   static async getNavigation(): Promise<Navigation | null> {
+    if (!db) return null;
+    
     const cached = this.getCached<Navigation>(CONTENT_IDS.NAVIGATION);
     if (cached) return cached;
 
@@ -237,6 +254,7 @@ export class ContentService {
   }
 
   static async updateNavigation(data: Partial<Navigation>, userId: string): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const docRef = doc(db, COLLECTIONS.CONTENT, CONTENT_IDS.NAVIGATION);
     await updateDoc(docRef, {
       ...data,
@@ -254,6 +272,7 @@ export class ContentService {
     data: unknown,
     userId: string
   ): Promise<void> {
+    if (!db) return;
     await addDoc(collection(db, COLLECTIONS.VERSIONS), {
       contentType,
       contentId,
@@ -264,6 +283,7 @@ export class ContentService {
   }
 
   static async getVersionHistory(contentId: string): Promise<ContentVersion[]> {
+    if (!db) return [];
     const q = query(
       collection(db, COLLECTIONS.VERSIONS),
       orderBy('changedAt', 'desc')
@@ -277,6 +297,7 @@ export class ContentService {
 
   // Initialize Default Content
   static async initializeDefaultContent(): Promise<void> {
+    if (!db) throw new Error('Firebase not initialized');
     const metadata: SiteMetadata = {
       id: CONTENT_IDS.METADATA,
       title: "San Diego Yacht Rock Festival 2025 | Liberty Station",
