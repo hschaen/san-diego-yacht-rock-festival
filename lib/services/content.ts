@@ -40,26 +40,30 @@ export class ContentService {
   private static CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   private static getCached<T>(key: string): T | null {
-    const cached = this.cache.get(key);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+    if (!ContentService.cache) return null;
+    const cached = ContentService.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < ContentService.CACHE_TTL) {
       return cached.data as T;
     }
     return null;
   }
 
   private static setCache(key: string, data: unknown): void {
-    this.cache.set(key, { data, timestamp: Date.now() });
+    if (!ContentService.cache) return;
+    ContentService.cache.set(key, { data, timestamp: Date.now() });
   }
 
   static clearCache(): void {
-    this.cache.clear();
+    if (ContentService.cache) {
+      ContentService.cache.clear();
+    }
   }
 
   // Site Metadata
   static async getSiteMetadata(): Promise<SiteMetadata | null> {
     if (!db) return null;
     
-    const cached = this.getCached<SiteMetadata>(CONTENT_IDS.METADATA);
+    const cached = ContentService.getCached<SiteMetadata>(CONTENT_IDS.METADATA);
     if (cached) return cached;
 
     try {
@@ -68,7 +72,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as SiteMetadata;
-        this.setCache(CONTENT_IDS.METADATA, data);
+        ContentService.setCache(CONTENT_IDS.METADATA, data);
         return data;
       }
       return null;
@@ -86,15 +90,15 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.METADATA, 'metadata', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.METADATA, 'metadata', data, userId);
+    ContentService.clearCache();
   }
 
   // Home Page
   static async getHomePage(): Promise<HomePage | null> {
     if (!db) return null;
     
-    const cached = this.getCached<HomePage>(CONTENT_IDS.HOME);
+    const cached = ContentService.getCached<HomePage>(CONTENT_IDS.HOME);
     if (cached) return cached;
 
     try {
@@ -103,7 +107,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as HomePage;
-        this.setCache(CONTENT_IDS.HOME, data);
+        ContentService.setCache(CONTENT_IDS.HOME, data);
         return data;
       }
       return null;
@@ -121,15 +125,15 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.HOME, 'home', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.HOME, 'home', data, userId);
+    ContentService.clearCache();
   }
 
   // Lineup Page
   static async getLineupPage(): Promise<LineupPage | null> {
     if (!db) return null;
     
-    const cached = this.getCached<LineupPage>(CONTENT_IDS.LINEUP);
+    const cached = ContentService.getCached<LineupPage>(CONTENT_IDS.LINEUP);
     if (cached) return cached;
 
     try {
@@ -138,7 +142,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as LineupPage;
-        this.setCache(CONTENT_IDS.LINEUP, data);
+        ContentService.setCache(CONTENT_IDS.LINEUP, data);
         return data;
       }
       return null;
@@ -156,15 +160,15 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.LINEUP, 'lineup', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.LINEUP, 'lineup', data, userId);
+    ContentService.clearCache();
   }
 
   // Schedule Page
   static async getSchedulePage(): Promise<SchedulePage | null> {
     if (!db) return null;
     
-    const cached = this.getCached<SchedulePage>(CONTENT_IDS.SCHEDULE);
+    const cached = ContentService.getCached<SchedulePage>(CONTENT_IDS.SCHEDULE);
     if (cached) return cached;
 
     try {
@@ -173,7 +177,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as SchedulePage;
-        this.setCache(CONTENT_IDS.SCHEDULE, data);
+        ContentService.setCache(CONTENT_IDS.SCHEDULE, data);
         return data;
       }
       return null;
@@ -191,15 +195,15 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.SCHEDULE, 'schedule', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.SCHEDULE, 'schedule', data, userId);
+    ContentService.clearCache();
   }
 
   // Tickets Page
   static async getTicketsPage(): Promise<TicketsPage | null> {
     if (!db) return null;
     
-    const cached = this.getCached<TicketsPage>(CONTENT_IDS.TICKETS);
+    const cached = ContentService.getCached<TicketsPage>(CONTENT_IDS.TICKETS);
     if (cached) return cached;
 
     try {
@@ -208,7 +212,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as TicketsPage;
-        this.setCache(CONTENT_IDS.TICKETS, data);
+        ContentService.setCache(CONTENT_IDS.TICKETS, data);
         return data;
       }
       return null;
@@ -226,15 +230,15 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.TICKETS, 'tickets', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.TICKETS, 'tickets', data, userId);
+    ContentService.clearCache();
   }
 
   // Navigation
   static async getNavigation(): Promise<Navigation | null> {
     if (!db) return null;
     
-    const cached = this.getCached<Navigation>(CONTENT_IDS.NAVIGATION);
+    const cached = ContentService.getCached<Navigation>(CONTENT_IDS.NAVIGATION);
     if (cached) return cached;
 
     try {
@@ -243,7 +247,7 @@ export class ContentService {
       
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as Navigation;
-        this.setCache(CONTENT_IDS.NAVIGATION, data);
+        ContentService.setCache(CONTENT_IDS.NAVIGATION, data);
         return data;
       }
       return null;
@@ -261,8 +265,8 @@ export class ContentService {
       updatedAt: serverTimestamp()
     });
     
-    await this.saveVersion(CONTENT_IDS.NAVIGATION, 'navigation', data, userId);
-    this.clearCache();
+    await ContentService.saveVersion(CONTENT_IDS.NAVIGATION, 'navigation', data, userId);
+    ContentService.clearCache();
   }
 
   // Version History
