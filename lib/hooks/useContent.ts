@@ -161,6 +161,7 @@ export const fallbackContent = {
     id: 'tickets_page',
     title: "GET YOUR TICKETS",
     subtitle: "Limited availability",
+    ticketsEnabled: false,
     tiers: [],
     infoSection: {
       title: "Ticket Information",

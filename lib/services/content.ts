@@ -385,6 +385,7 @@ export class ContentService {
       id: CONTENT_IDS.TICKETS,
       title: "GET YOUR TICKETS",
       subtitle: "Limited availability - Book now!",
+      ticketsEnabled: false,
       tiers: [
         {
           id: "1",

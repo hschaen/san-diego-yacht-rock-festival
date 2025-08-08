@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth, withAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Save, X, Eye, EyeOff, Star } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Save, X, Eye, EyeOff, Star, ToggleLeft, ToggleRight } from 'lucide-react';
 import { ContentService } from '@/lib/services/content';
 import { TicketsPage, TicketTier } from '@/lib/types/content';
 import { useTicketsPage } from '@/lib/hooks/useContent';
@@ -25,9 +25,13 @@ function TicketsEditor() {
     }
   }, [content]);
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean) => {
     if (!formData) return;
-    setFormData({ ...formData, [field]: value });
+    if (field === 'ticketsEnabled') {
+      setFormData({ ...formData, [field]: typeof value === 'string' ? value === 'true' : value });
+    } else {
+      setFormData({ ...formData, [field]: value });
+    }
   };
 
   const handleInfoChange = (field: string, value: string) => {
@@ -230,6 +234,39 @@ function TicketsEditor() {
 
             {/* Basic Info */}
             <div className="space-y-4 mb-8">
+              {/* Tickets Enable/Disable Toggle */}
+              <div className="bg-purple-800/30 rounded-lg p-4 border border-purple-400">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block text-yellow-400 font-semibold mb-1">Ticket Sales Status</label>
+                    <p className="text-white/60 text-sm">
+                      {formData.ticketsEnabled ? 'Tickets are currently ON SALE' : 'Tickets are NOT on sale (visitors will see RSVP form)'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleChange('ticketsEnabled', (!formData.ticketsEnabled).toString())}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      formData.ticketsEnabled 
+                        ? 'bg-green-600 hover:bg-green-700 text-white' 
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                  >
+                    {formData.ticketsEnabled ? (
+                      <>
+                        <ToggleRight size={24} />
+                        ON SALE
+                      </>
+                    ) : (
+                      <>
+                        <ToggleLeft size={24} />
+                        NOT ON SALE
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-cyan-300 mb-2">Page Title</label>
                 <input
@@ -446,6 +483,13 @@ function TicketsEditor() {
               <h2 className="text-2xl font-bold text-white mb-6">Preview</h2>
               
               <div className="bg-gradient-to-b from-purple-900/50 to-pink-900/50 rounded-lg p-6">
+                {!formData.ticketsEnabled && (
+                  <div className="mb-4 p-3 bg-orange-500/20 border border-orange-500 rounded-lg">
+                    <p className="text-orange-300 font-semibold text-center">
+                      ⚠️ Tickets are NOT on sale - Visitors will see RSVP prompt
+                    </p>
+                  </div>
+                )}
                 <h3 className="text-3xl font-bold text-yellow-400 mb-2">{formData.title}</h3>
                 <p className="text-cyan-300 mb-6">{formData.subtitle}</p>
 

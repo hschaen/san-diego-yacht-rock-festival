@@ -2,16 +2,26 @@
 
 import HamburgerMenu from "@/components/hamburger-menu";
 import Link from "next/link";
-import { ArrowLeft, Check, Star, Users, Wine } from "lucide-react";
+import { ArrowLeft, Check, Star, Users, Wine, X } from "lucide-react";
 import { useTicketsPage, fallbackContent } from "@/lib/hooks/useContent";
+import { useState, useEffect } from "react";
 
 export default function TicketsPage() {
   const { content } = useTicketsPage();
+  const [showModal, setShowModal] = useState(false);
   
   // Use content from database or fallback
   const pageContent = content || fallbackContent.tickets;
   const tiers = pageContent.tiers || [];
   const infoSection = pageContent.infoSection || { title: '', items: [] };
+  const ticketsEnabled = pageContent.ticketsEnabled ?? false;
+
+  useEffect(() => {
+    // Show modal if tickets are not enabled
+    if (!ticketsEnabled && content) {
+      setShowModal(true);
+    }
+  }, [ticketsEnabled, content]);
 
   // Icon mapping for tiers
   const getIcon = (tierName: string) => {
@@ -236,6 +246,53 @@ export default function TicketsPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal for when tickets are not on sale */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div className="relative bg-gradient-to-b from-purple-900 to-pink-900 rounded-xl p-8 max-w-md w-full border-2 border-yellow-400 shadow-2xl">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="text-center">
+              <div className="mb-4">
+                <span className="text-6xl">🎵</span>
+              </div>
+              <h2 className="text-3xl font-bold text-yellow-400 mb-3">
+                Tickets aren't on sale yet!
+              </h2>
+              <p className="text-cyan-300 mb-6">
+                Be the first to know when tickets become available for the smoothest yacht rock experience in San Diego!
+              </p>
+              
+              <div className="space-y-3">
+                <Link
+                  href="/"
+                  className="block w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-300 hover:to-orange-300 text-purple-900 font-bold py-3 px-6 rounded-lg transition-colors shadow-lg"
+                >
+                  Get Notified When Tickets Go On Sale
+                </Link>
+                
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="block w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                >
+                  Browse Ticket Options Anyway
+                </button>
+              </div>
+              
+              <p className="text-white/60 text-sm mt-4">
+                Join our Captain's List for exclusive early access
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

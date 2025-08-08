@@ -89,6 +89,7 @@ export interface TicketsPage {
   id: string;
   title: string;
   subtitle: string;
+  ticketsEnabled: boolean;
   tiers: TicketTier[];
   infoSection: {
     title: string;

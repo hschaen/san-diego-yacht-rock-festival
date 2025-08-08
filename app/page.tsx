@@ -3,7 +3,7 @@
 import Image from "next/image";
 import HamburgerMenu from "@/components/hamburger-menu";
 import { useState } from "react";
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useHomePage, fallbackContent } from "@/lib/hooks/useContent";
 
@@ -33,38 +33,19 @@ export default function Home() {
 
     try {
       if (db) {
-        // Check for duplicate registration
-        const registrationsRef = collection(db, "registrations");
-        
-        // Query for existing registration with same name AND (same email OR same phone)
-        const emailQuery = query(
-          registrationsRef,
-          where("name", "==", formData.name),
-          where("email", "==", formData.email)
-        );
-        
-        const phoneQuery = formData.phone ? query(
-          registrationsRef,
-          where("name", "==", formData.name),
-          where("phone", "==", formData.phone)
-        ) : null;
-        
-        const emailSnapshot = await getDocs(emailQuery);
-        const phoneSnapshot = phoneQuery ? await getDocs(phoneQuery) : null;
-        
-        // Check if duplicate exists
-        if (!emailSnapshot.empty || (phoneSnapshot && !phoneSnapshot.empty)) {
-          alert("You're already registered! We'll notify you when tickets go on sale.");
-          setFormData({ name: "", email: "", phone: "" });
+        // Validate required fields
+        if (!formData.name || !formData.email) {
+          alert("Please fill in your name and email address.");
           setIsSubmitting(false);
           return;
         }
-        
-        // No duplicate found, proceed with registration
+
+        // Create registration
         await addDoc(collection(db, "registrations"), {
           ...formData,
           timestamp: serverTimestamp(),
         });
+        
         setSubmitSuccess(true);
         setFormData({ name: "", email: "", phone: "" });
         setTimeout(() => setSubmitSuccess(false), 5000);
