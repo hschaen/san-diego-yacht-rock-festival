@@ -3,7 +3,7 @@
 import Image from "next/image";
 import HamburgerMenu from "@/components/hamburger-menu";
 import { useState } from "react";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useHomePage, fallbackContent } from "@/lib/hooks/useContent";
 
@@ -63,7 +63,7 @@ export default function Home() {
         // No duplicate found, proceed with registration
         await addDoc(collection(db, "registrations"), {
           ...formData,
-          timestamp: new Date(),
+          timestamp: serverTimestamp(),
         });
         setSubmitSuccess(true);
         setFormData({ name: "", email: "", phone: "" });

@@ -30,12 +30,13 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/admins/$(request.auth.uid));
       
       // Anyone can create a registration with proper data
-      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'phone', 'timestamp']) &&
-                       request.resource.data.name is string &&
+      // More flexible rules that accept both timestamp and valid data
+      allow create: if request.resource.data.name is string &&
+                       request.resource.data.name.size() > 0 &&
                        request.resource.data.email is string &&
                        request.resource.data.email.size() > 0 &&
                        request.resource.data.phone is string &&
-                       request.resource.data.timestamp is timestamp;
+                       request.resource.data.timestamp != null;
     }
   }
 }
