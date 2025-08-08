@@ -264,7 +264,7 @@ export default function TicketsPage() {
                 <span className="text-6xl">🎵</span>
               </div>
               <h2 className="text-3xl font-bold text-yellow-400 mb-3">
-                Tickets aren't on sale yet!
+                Tickets aren&apos;t on sale yet!
               </h2>
               <p className="text-cyan-300 mb-6">
                 Be the first to know when tickets become available for the smoothest yacht rock experience in San Diego!
@@ -287,7 +287,7 @@ export default function TicketsPage() {
               </div>
               
               <p className="text-white/60 text-sm mt-4">
-                Join our Captain's List for exclusive early access
+                Join our Captain&apos;s List for exclusive early access
               </p>
             </div>
           </div>
