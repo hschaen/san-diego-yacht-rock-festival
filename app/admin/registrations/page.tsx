@@ -2,7 +2,7 @@
 
 import { withAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
-import { ArrowLeft, Download, Users, Edit2, Trash2, Plus, X, Save } from 'lucide-react';
+import { ArrowLeft, Download, Users, Edit2, Trash2, Plus, X, Save, UserMinus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -244,6 +244,94 @@ function RegistrationsPage() {
     document.body.removeChild(link);
   };
 
+  const removeDuplicates = async () => {
+    if (!db) return;
+    
+    if (!confirm('This will remove duplicate registrations, keeping only the earliest one for each person. Continue?')) {
+      return;
+    }
+
+    setLoading(true);
+    let duplicatesRemoved = 0;
+
+    try {
+      // Create maps to track duplicates
+      const nameEmailMap = new Map<string, Registration[]>();
+      const namePhoneMap = new Map<string, Registration[]>();
+
+      // Group registrations by name+email and name+phone
+      registrations.forEach(reg => {
+        const nameEmail = `${reg.name.toLowerCase().trim()}_${reg.email.toLowerCase().trim()}`;
+        const namePhone = reg.phone ? `${reg.name.toLowerCase().trim()}_${reg.phone.replace(/\D/g, '')}` : null;
+
+        // Track by name+email
+        if (!nameEmailMap.has(nameEmail)) {
+          nameEmailMap.set(nameEmail, []);
+        }
+        nameEmailMap.get(nameEmail)!.push(reg);
+
+        // Track by name+phone (if phone exists)
+        if (namePhone && reg.phone) {
+          if (!namePhoneMap.has(namePhone)) {
+            namePhoneMap.set(namePhone, []);
+          }
+          namePhoneMap.get(namePhone)!.push(reg);
+        }
+      });
+
+      // Find all duplicates to remove
+      const toDelete = new Set<string>();
+
+      // Process name+email duplicates
+      nameEmailMap.forEach(regs => {
+        if (regs.length > 1) {
+          // Sort by timestamp (oldest first)
+          const sorted = [...regs].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+          // Mark all except the first (oldest) for deletion
+          for (let i = 1; i < sorted.length; i++) {
+            toDelete.add(sorted[i].id);
+          }
+        }
+      });
+
+      // Process name+phone duplicates
+      namePhoneMap.forEach(regs => {
+        if (regs.length > 1) {
+          // Sort by timestamp (oldest first)
+          const sorted = [...regs].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+          // Mark all except the first (oldest) for deletion
+          for (let i = 1; i < sorted.length; i++) {
+            toDelete.add(sorted[i].id);
+          }
+        }
+      });
+
+      // Delete duplicates from Firestore
+      if (toDelete.size > 0) {
+        const deletePromises = Array.from(toDelete).map(id => 
+          deleteDoc(doc(db!, 'registrations', id))
+        );
+        
+        await Promise.all(deletePromises);
+        duplicatesRemoved = toDelete.size;
+      }
+
+      // Update local state
+      setRegistrations(prev => prev.filter(reg => !toDelete.has(reg.id)));
+
+      if (duplicatesRemoved > 0) {
+        alert(`Successfully removed ${duplicatesRemoved} duplicate registration${duplicatesRemoved > 1 ? 's' : ''}`);
+      } else {
+        alert('No duplicate registrations found');
+      }
+    } catch (err) {
+      console.error('Error removing duplicates:', err);
+      alert('Failed to remove duplicates');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -263,6 +351,14 @@ function RegistrationsPage() {
             >
               <Plus size={20} />
               Add Entry
+            </button>
+            <button
+              onClick={removeDuplicates}
+              disabled={registrations.length === 0 || loading}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+            >
+              <UserMinus size={20} />
+              Remove Duplicates
             </button>
             <button
               onClick={exportToCSV}
