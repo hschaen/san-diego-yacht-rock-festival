@@ -22,10 +22,14 @@ service cloud.firestore {
          exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
     }
     
-    // Allow anyone to write to registrations (for the signup form)
+    // Allow anyone to create registrations (for the signup form)
+    // Allow admins to read, update, and delete registrations
     match /registrations/{document=**} {
-      allow read: if request.auth != null && 
+      // Admins can read, update, and delete
+      allow read, update, delete: if request.auth != null && 
         exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      
+      // Anyone can create a registration with proper data
       allow create: if request.resource.data.keys().hasAll(['name', 'email', 'phone', 'timestamp']) &&
                        request.resource.data.name is string &&
                        request.resource.data.email is string &&

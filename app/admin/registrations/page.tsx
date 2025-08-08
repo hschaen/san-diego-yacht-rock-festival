@@ -4,7 +4,7 @@ import { withAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
 import { ArrowLeft, Download, Users, Edit2, Trash2, Plus, X, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, addDoc, serverTimestamp, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface Registration {
@@ -82,6 +82,35 @@ function RegistrationsPage() {
     if (!db) return;
 
     try {
+      // Check for duplicate registration (excluding current record)
+      const registrationsRef = collection(db, 'registrations');
+      
+      // Query for existing registration with same name AND (same email OR same phone)
+      const emailQuery = query(
+        registrationsRef,
+        where("name", "==", formData.name),
+        where("email", "==", formData.email)
+      );
+      
+      const phoneQuery = formData.phone ? query(
+        registrationsRef,
+        where("name", "==", formData.name),
+        where("phone", "==", formData.phone)
+      ) : null;
+      
+      const emailSnapshot = await getDocs(emailQuery);
+      const phoneSnapshot = phoneQuery ? await getDocs(phoneQuery) : null;
+      
+      // Check if duplicate exists (excluding current record)
+      const emailDuplicate = emailSnapshot.docs.find(doc => doc.id !== id);
+      const phoneDuplicate = phoneSnapshot ? phoneSnapshot.docs.find(doc => doc.id !== id) : null;
+      
+      if (emailDuplicate || phoneDuplicate) {
+        alert('Another registration already exists with the same name and email/phone!');
+        return;
+      }
+      
+      // No duplicate found, proceed with update
       await updateDoc(doc(db, 'registrations', id), {
         name: formData.name,
         email: formData.email,
@@ -127,6 +156,32 @@ function RegistrationsPage() {
     }
 
     try {
+      // Check for duplicate registration
+      const registrationsRef = collection(db, 'registrations');
+      
+      // Query for existing registration with same name AND (same email OR same phone)
+      const emailQuery = query(
+        registrationsRef,
+        where("name", "==", formData.name),
+        where("email", "==", formData.email)
+      );
+      
+      const phoneQuery = formData.phone ? query(
+        registrationsRef,
+        where("name", "==", formData.name),
+        where("phone", "==", formData.phone)
+      ) : null;
+      
+      const emailSnapshot = await getDocs(emailQuery);
+      const phoneSnapshot = phoneQuery ? await getDocs(phoneQuery) : null;
+      
+      // Check if duplicate exists
+      if (!emailSnapshot.empty || (phoneSnapshot && !phoneSnapshot.empty)) {
+        alert('This person is already registered with the same name and email/phone!');
+        return;
+      }
+      
+      // No duplicate found, proceed with registration
       const docRef = await addDoc(collection(db, 'registrations'), {
         name: formData.name,
         email: formData.email,
