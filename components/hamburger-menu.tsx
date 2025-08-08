@@ -4,11 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import TicketModal from "./ticket-modal";
 
 export default function HamburgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleTicketClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsOpen(false); // Close the menu
+    setShowTicketModal(true); // Show the modal
+  };
 
   const menuVariants = {
     closed: {
@@ -59,9 +67,9 @@ export default function HamburgerMenu() {
   };
 
   const menuItems = [
-    { href: "/lineup", label: "Lineup" },
-    { href: "/schedule", label: "Schedule" },
-    { href: "/tickets", label: "Tickets" },
+    { href: "/lineup", label: "Lineup", isTicket: false },
+    { href: "/schedule", label: "Schedule", isTicket: false },
+    { href: "/tickets", label: "Tickets", isTicket: true },
   ];
 
   return (
@@ -131,13 +139,22 @@ export default function HamburgerMenu() {
                         exit="closed"
                         variants={linkVariants}
                       >
-                        <Link
-                          href={item.href}
-                          onClick={toggleMenu}
-                          className="block text-xl text-white hover:text-yellow-400 transition-colors py-2 font-semibold drop-shadow-lg"
-                        >
-                          {item.label}
-                        </Link>
+                        {item.isTicket ? (
+                          <button
+                            onClick={handleTicketClick}
+                            className="block w-full text-left text-xl text-white hover:text-yellow-400 transition-colors py-2 font-semibold drop-shadow-lg"
+                          >
+                            {item.label}
+                          </button>
+                        ) : (
+                          <Link
+                            href={item.href}
+                            onClick={toggleMenu}
+                            className="block text-xl text-white hover:text-yellow-400 transition-colors py-2 font-semibold drop-shadow-lg"
+                          >
+                            {item.label}
+                          </Link>
+                        )}
                       </motion.li>
                     ))}
                   </ul>
@@ -151,13 +168,12 @@ export default function HamburgerMenu() {
                   variants={linkVariants}
                   className="mt-auto"
                 >
-                  <Link
-                    href="/tickets"
-                    onClick={toggleMenu}
+                  <button
+                    onClick={handleTicketClick}
                     className="block w-full bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold py-4 px-6 rounded-lg text-center text-lg transition-colors shadow-lg"
                   >
                     Get Notified
-                  </Link>
+                  </button>
                   
                   <div className="mt-6 pt-6 border-t border-purple-700/50">
                     <p className="text-sm text-purple-200">
@@ -173,6 +189,9 @@ export default function HamburgerMenu() {
           </>
         )}
       </AnimatePresence>
+      
+      {/* Ticket Modal */}
+      <TicketModal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} />
     </>
   );
 }
