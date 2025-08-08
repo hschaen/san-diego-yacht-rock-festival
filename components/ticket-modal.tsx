@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface TicketModalProps {
   isOpen: boolean;
-  onClose?: () => void; // Optional, won't be used but kept for flexibility
+  onClose?: () => void;
 }
 
-export default function TicketModal({ isOpen }: TicketModalProps) {
+export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -45,6 +45,7 @@ export default function TicketModal({ isOpen }: TicketModalProps) {
               {/* Single button that redirects to homepage */}
               <Link
                 href="/"
+                onClick={onClose}
                 className="block w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-300 hover:to-orange-300 text-purple-900 font-bold py-3 px-6 rounded-lg transition-colors shadow-lg"
               >
                 Get Notified When Tickets Go On Sale
